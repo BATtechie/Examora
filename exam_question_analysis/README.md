@@ -315,11 +315,11 @@ Open your browser at: `http://localhost:8501`
 
 ## 🔢 Model Results
 
-| Model | Accuracy | F1 (weighted) |
+| Model | Accuracy | F1  |
 |---|---|---|
-| Logistic Regression | ~85.6% | — |
-| Decision Tree | ~82.1% | — |
-| Random Forest | ~83.2% | — |
+| Logistic Regression | ~85.6% | ~85.65% |
+| Decision Tree | ~82.1% | ~82.12% |
+| Random Forest | ~83.2% | ~83.28% |
  
 ---
 
