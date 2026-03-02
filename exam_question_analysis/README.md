@@ -320,9 +320,7 @@ Open your browser at: `http://localhost:8501`
 | Logistic Regression | ~85.6% | — |
 | Decision Tree | ~82.1% | — |
 | Random Forest | ~83.2% | — |
-
-> All models target the **80–90% accuracy range** by design (Gaussian noise is added to numerical features during training to prevent overfitting and simulate real-world label uncertainty).
-
+ 
 ---
 
 ## 🔑 Key Design Decisions
