@@ -1,0 +1,14 @@
+{
+  "Logistic Regression": {
+    "accuracy": 0.856,
+    "f1_weighted": 0.8565231482072424
+  },
+  "Decision Tree": {
+    "accuracy": 0.821,
+    "f1_weighted": 0.8211560452570857
+  },
+  "Random Forest": {
+    "accuracy": 0.832,
+    "f1_weighted": 0.8328063382618428
+  }
+}
