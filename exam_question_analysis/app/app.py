@@ -1,4 +1,7 @@
 import os, sys, json, warnings
+from dotenv import load_dotenv
+
+load_dotenv()
 warnings.filterwarnings("ignore")
 
 import numpy as np
@@ -15,6 +18,7 @@ sys.path.insert(0, ROOT)
 
 from src.preprocessing import preprocess
 from src.feature_engineering import build_features
+from src.agent import run_agentic_workflow
 
 MODELS_DIR = os.path.join(ROOT, "models")
 
@@ -271,7 +275,7 @@ with st.sidebar:
 
     page = st.radio(
         "Navigate",
-        ["🔍  Single Predictor", "📋  Batch Upload", "📊  Model Dashboard"],
+        ["🔍  Single Predictor", "📋  Batch Upload", "📊  Model Dashboard", "🤖  AI Assistant"],
         label_visibility="collapsed",
     )
 
@@ -582,7 +586,7 @@ elif "Batch" in page:
                     mime="text/csv",
                 )
 
-else:
+elif "Dashboard" in page:
     st.markdown("""
     <div style='margin-bottom:1.8rem;'>
         <div class='section-label'>Analytics</div>
@@ -716,3 +720,75 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
+elif "AI" in page:
+    st.markdown("""
+    <div style='margin-bottom:1.8rem;'>
+        <div class='section-label'>AI Design Partner</div>
+        <h2 style='margin:0;font-size:1.75rem;font-weight:700;letter-spacing:-0.02em;'>
+            Agentic AI <span class='gradient-text'>Assessment Assistant</span>
+        </h2>
+        <p style='color:#64748b;margin-top:0.4rem;font-size:0.88rem;'>
+            Get actionable pedagogy guidelines and suggestions to improve your exam questions.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    with st.container():
+        st.markdown("<div class='section-label'>Question Context</div>", unsafe_allow_html=True)
+        q_text_ai = st.text_area("Question Text", height=110, key="ai_q_text", placeholder="Type the question...")
+        
+        c1, c2, c3, c4 = st.columns(4)
+        with c1: subj_ai = st.selectbox("Subject", SUBJECTS, key="ai_subj")
+        with c2: topic_ai = st.text_input("Topic", value="Algebra", key="ai_topic")
+        with c3: qtype_ai = st.selectbox("Type", Q_TYPES, key="ai_qtype")
+        with c4: coglvl_ai = st.selectbox("Cognitive", COG_LEVELS, key="ai_cog")
+
+        s1, s2, s3 = st.columns(3)
+        with s1: avg_ai = st.number_input("Avg Score", value=6.5, key="ai_avg")
+        with s2: std_ai = st.number_input("Std Dev", value=1.2, key="ai_std")
+        with s3: disc_ai = st.number_input("Discrimination", value=0.3, key="ai_disc")
+        
+        groq_key = os.environ.get("GROQ_API_KEY", "")
+
+    if st.button("🧠 Generate pedagogical insights", key="btn_ai"):
+        if not groq_key:
+            st.error("Please add your GROQ_API_KEY to the .env file in the root directory to use the Agentic Assistant.")
+        else:
+            with st.spinner("Agent is analyzing and searching pedagogy best practices..."):
+                row = {
+                    "question_text": q_text_ai,
+                    "subject": subj_ai,
+                    "topic": topic_ai,
+                    "question_type": qtype_ai,
+                    "cognitive_level": coglvl_ai,
+                    "avg_score": float(avg_ai),
+                    "std_dev": float(std_ai),
+                    "discrimination_index": float(disc_ai),
+                }
+                label, conf = _infer(row, resources)
+                user_msg = f"My question is: '{q_text_ai}'. It belongs to {subj_ai} ({topic_ai}), type: {qtype_ai}, cognitive level: {coglvl_ai}. Historically, students score an average of {avg_ai}/10 with a standard deviation of {std_ai} and discrimination index of {disc_ai}. The predicted difficulty is {label}. What is the assessment quality and how can I improve this?"
+                
+                raw_answer = run_agentic_workflow(user_msg, groq_key)
+                formatted_answer = raw_answer
+                
+            st.markdown(f"### 🤖 Assessment Insights (Predicted Difficulty: **{label}**)")
+            
+            try:
+                ans_dict = json.loads(formatted_answer)
+                t1, t2, t3 = st.tabs(["🧠 Reasoning", "📚 Learning Gaps", "💡 Recommendations"])
+                
+                with t1:
+                    st.markdown(f"<div style='color:#e2e8f0; font-size:1.02rem; line-height: 1.6; padding: 1rem;'>{ans_dict.get('reasoning', '')}</div>", unsafe_allow_html=True)
+                with t2:
+                    st.markdown(f"<div style='color:#e2e8f0; font-size:1.02rem; line-height: 1.6; padding: 1rem;'>{ans_dict.get('learning_gaps', '')}</div>", unsafe_allow_html=True)
+                with t3:
+                    st.markdown(f"<div style='color:#e2e8f0; font-size:1.02rem; line-height: 1.6; padding: 1rem;'>{ans_dict.get('recommendations', '')}</div>", unsafe_allow_html=True)
+            except Exception as e:
+                safe_answer = formatted_answer.replace('\\n', '<br>')
+                st.markdown(f"""
+                <div class='card' style='margin-top: 1rem;'>
+                    <div style='color:#e2e8f0; font-size:1.05rem; line-height: 1.6;'>
+                        {safe_answer}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
