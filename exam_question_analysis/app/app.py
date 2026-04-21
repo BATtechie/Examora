@@ -208,6 +208,16 @@ SUBJECTS     = ["Mathematics", "Physics", "Chemistry", "Biology", "Computer Scie
 Q_TYPES      = ["MCQ", "Short Answer", "Long Answer", "Numerical"]
 COG_LEVELS   = ["Remember", "Understand", "Apply", "Analyze", "Evaluate"]
 
+def get_groq_api_key() -> str:
+    # Priority: environment variable (.env/local or platform env) -> Streamlit secrets
+    key = os.environ.get("GROQ_API_KEY", "")
+    if key:
+        return key
+    try:
+        return st.secrets.get("GROQ_API_KEY", "")
+    except Exception:
+        return ""
+
 @st.cache_resource(show_spinner=False)
 def load_resources():
     try:
@@ -748,7 +758,7 @@ elif "AI" in page:
         with s2: std_ai = st.number_input("Std Dev", value=1.2, key="ai_std")
         with s3: disc_ai = st.number_input("Discrimination", value=0.3, key="ai_disc")
         
-        groq_key = os.environ.get("GROQ_API_KEY", "")
+        groq_key = get_groq_api_key()
 
     if st.button("🧠 Generate pedagogical insights", key="btn_ai"):
         if not groq_key:
