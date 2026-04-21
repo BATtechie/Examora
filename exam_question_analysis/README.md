@@ -29,7 +29,7 @@ Built with Scikit-Learn, LangGraph, Groq API (LLaMa 3), NLTK, Streamlit, and Plo
 
 ## 🏗️ Project Architecture
 
-![Examora System Architecture](architecture_diagram.png)
+![Examora System Architecture](assets/architecture_diagram.png)
 
 **System Overview (Detailed):**
 
