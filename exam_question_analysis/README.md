@@ -82,7 +82,8 @@ exam_question_analysis/
 │
 ├── app/
 │   └── app.py                  # Streamlit web application (UI)
-│
+├── assets/
+│   └── architecture_diagram.png  
 ├── src/
 │   ├── __init__.py             
 │   ├── preprocessing.py        # Data cleaning, encoding, text preprocessing
