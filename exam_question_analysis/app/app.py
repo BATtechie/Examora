@@ -1,7 +1,8 @@
 import os, sys, json, warnings
 from dotenv import load_dotenv
 
-load_dotenv()
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(ROOT, ".env"))
 warnings.filterwarnings("ignore")
 
 import numpy as np
@@ -13,7 +14,6 @@ import plotly.graph_objects as go
 import plotly.express as px
 from PIL import Image
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 from src.preprocessing import preprocess
